@@ -3,8 +3,5 @@
   "version": "1.0.0",
   "main": "fan_speed.5s.js",
   "author": "Masayuki Sunahara <tamanishi@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "bitbar": "^1.3.1"
-  }
+  "license": "MIT"
 }

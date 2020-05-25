@@ -8,7 +8,6 @@
 // <bitbar.dependencies>node</bitbar.dependencies>
 // <bitbar.abouturl>https://github.com/tamanishi/fan_speed</bitbar.abouturl> 
 
-const bitbar = require('bitbar')
 const execSync = require('child_process').execSync
 
 let speeds= '♨ '
@@ -35,11 +34,4 @@ for (var fanCount = 0; fanCount < 2; fanCount++) {
     speeds += ' rpm '
 }
 
-bitbar([
-    {
-        text: speeds,
-        color: bitbar.darkMode ? 'white' : 'black',
-        dropdown: false,
-        size: 12
-    }
-])
+console.log(speeds + '| size=12')
