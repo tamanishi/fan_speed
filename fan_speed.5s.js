@@ -2,7 +2,7 @@
 const bitbar = require('bitbar')
 const execSync = require('child_process').execSync
 
-let speeds= ''
+let speeds= '♨ '
 
 for (var fanCount = 0; fanCount < 2; fanCount++) {
     let str = execSync(`/usr/local/bin/smc -k F${fanCount}Ac -r`).toString()
