@@ -2,6 +2,8 @@
 
 ## What is this?
 
+![image](image.png)
+
 ファンのスピードを表示する[BitBar](https://getbitbar.com/ "BitBar")のプラグインです。
 
 [Eric Ripa](https://getbitbar.com/contributors/eripa "Eric Ripa")さんが作られていた[Fan Speed](https://getbitbar.com/plugins/System/fan-speed.5s.sh "Fan Speed")というプラグインを使っていたのですが、MacBook Proを新調(2020)したら動かなくなってしまったので自作しました。
