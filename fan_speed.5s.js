@@ -14,7 +14,9 @@ const execSync = require('child_process').execSync
 let speeds= '♨ '
 
 for (var fanCount = 0; fanCount < 2; fanCount++) {
+    // smc command responds like "  F0Ac  [flt ]  (bytes d0 f4 9c 44)".
     let str = execSync(`/usr/local/bin/smc -k F${fanCount}Ac -r`).toString()
+    // extract inside parrens.
     let result = str.match(/\(bytes (.+)\)/)
     
     let array = result[1].split(' ')
@@ -28,6 +30,7 @@ for (var fanCount = 0; fanCount < 2; fanCount++) {
     
     let view = new DataView(buffer)
     
+    // "true" means "treat as Little-endian".
     speeds += Math.floor(view.getFloat32(0, true)).toString()
     speeds += ' rpm '
 }
