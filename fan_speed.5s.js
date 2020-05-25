@@ -1,4 +1,13 @@
 #!/usr/bin/env /usr/local/bin/node
+// <bitbar.title>fan_speed</bitbar.title>
+// <bitbar.version>v1.0</bitbar.version>
+// <bitbar.author>Masayuki Sunahara</bitbar.author>
+// <bitbar.author.github>tamanishi</bitbar.author.github>
+// <bitbar.desc>Shows fan speed. Strongly inpired by Eric Ripa's "Fan Speed" plugin.</bitbar.desc>
+// <bitbar.image>https://github.com/tamanishi/fan_speed/blob/master/image.png</bitbar.image>
+// <bitbar.dependencies>node</bitbar.dependencies>
+// <bitbar.abouturl>https://github.com/tamanishi/fan_speed</bitbar.abouturl> 
+
 const bitbar = require('bitbar')
 const execSync = require('child_process').execSync
 
