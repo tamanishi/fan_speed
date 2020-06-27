@@ -10,7 +10,7 @@
 
 const execSync = require('child_process').execSync
 
-let speeds= '♨ '
+let speeds = ':cyclone: '
 
 for (var fanCount = 0; fanCount < 2; fanCount++) {
     // smc command responds like "  F0Ac  [flt ]  (bytes d0 f4 9c 44)".
