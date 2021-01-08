@@ -10,7 +10,7 @@
 
 const execSync = require('child_process').execSync
 
-let speeds = ':cyclone: '
+let speeds = ''
 
 for (var fanCount = 0; fanCount < 2; fanCount++) {
     // smc command responds like "  F0Ac  [flt ]  (bytes d0 f4 9c 44)".
@@ -34,4 +34,9 @@ for (var fanCount = 0; fanCount < 2; fanCount++) {
     speeds += ' rpm '
 }
 
-console.log(speeds + '| size=12')
+if (process.env.SWIFTBAR === '1') {
+    console.log(':wind.snow: ' + speeds + '| size=12, symbolize=true')
+} else {
+    console.log(':cyclone: ' + speeds + '| size=12')
+}
+
