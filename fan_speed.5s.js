@@ -1,4 +1,4 @@
-#!/usr/bin/env /usr/local/bin/node
+#!/usr/bin/env node
 // <bitbar.title>fan_speed</bitbar.title>
 // <bitbar.version>v1.0</bitbar.version>
 // <bitbar.author>Masayuki Sunahara</bitbar.author>
@@ -12,7 +12,11 @@ const execSync = require('child_process').execSync
 
 let speeds = ''
 
-for (var fanCount = 0; fanCount < 2; fanCount++) {
+let str = execSync(`/usr/local/bin/smc -k FNum -r`).toString()
+let result = str.match(/\(bytes (.+)\)/)
+let fanNumber = parseInt(result[1])
+
+for (var fanCount = 0; fanCount < fanNumber; fanCount++) {
     // smc command responds like "  F0Ac  [flt ]  (bytes d0 f4 9c 44)".
     let str = execSync(`/usr/local/bin/smc -k F${fanCount}Ac -r`).toString()
     // extract inside parrens.
