@@ -1,46 +1,87 @@
 #!/usr/bin/env node
 // <bitbar.title>fan_speed</bitbar.title>
-// <bitbar.version>v1.0</bitbar.version>
+// <bitbar.version>v2.0</bitbar.version>
 // <bitbar.author>Masayuki Sunahara</bitbar.author>
 // <bitbar.author.github>tamanishi</bitbar.author.github>
-// <bitbar.desc>Shows fan speed. Strongly inpired by Eric Ripa's "Fan Speed" plugin.</bitbar.desc>
+// <bitbar.desc>Shows fan speed.</bitbar.desc>
 // <bitbar.image>https://github.com/tamanishi/fan_speed/blob/master/image.png?raw=true</bitbar.image>
 // <bitbar.dependencies>node</bitbar.dependencies>
-// <bitbar.abouturl>https://github.com/tamanishi/fan_speed</bitbar.abouturl> 
+// <bitbar.abouturl>https://github.com/tamanishi/fan_speed</bitbar.abouturl>
 
-const execSync = require('child_process').execSync
+const execSync = require('child_process').execSync;
 
-let speeds = ''
+function extractBytesPayload(input) {
+    if (typeof input !== 'string') {
+        return null;
+    }
 
-let str = execSync(`/usr/local/bin/smc -k FNum -r`).toString()
-let result = str.match(/\(bytes (.+)\)/)
-let fanNumber = parseInt(result[1])
-
-for (var fanCount = 0; fanCount < fanNumber; fanCount++) {
-    // smc command responds like "  F0Ac  [flt ]  (bytes d0 f4 9c 44)".
-    let str = execSync(`/usr/local/bin/smc -k F${fanCount}Ac -r`).toString()
-    // extract inside parrens.
-    let result = str.match(/\(bytes (.+)\)/)
-    
-    let array = result[1].split(' ')
-    
-    let buffer = new ArrayBuffer(4)
-    let bytes = new Uint8Array(buffer)
-    
-    array.forEach((element, index) => {
-        bytes[index] = parseInt(element, 16)
-    })
-    
-    let view = new DataView(buffer)
-    
-    // "true" means "treat as Little-endian".
-    speeds += Math.floor(view.getFloat32(0, true)).toString()
-    speeds += ' rpm '
+    const match = input.match(/\(bytes\s+([0-9a-fA-F\s]+)\)/i);
+    return match ? match[1].trim() : null;
 }
 
-if (process.env.SWIFTBAR === '1') {
-    console.log(':wind.snow: ' + speeds + '| size=12, symbolize=true')
-} else {
-    console.log(':cyclone: ' + speeds + '| size=12')
+function parseFanData(input) {
+    if (typeof input !== 'string') {
+        return null;
+    }
+
+    let data;
+    try {
+        data = JSON.parse(input);
+    } catch (error) {
+        return null;
+    }
+
+    if (!data || typeof data !== 'object') {
+        return null;
+    }
+
+    const fanSection = data.Fans && typeof data.Fans === 'object' ? data.Fans : data;
+    const fanCountEntry = fanSection['Fan Count'] || Object.values(fanSection).find((entry) => entry && entry.key === 'FNum');
+    const fanCount = fanCountEntry && Number.isFinite(Number(fanCountEntry.quantity))
+        ? Number(fanCountEntry.quantity)
+        : 0;
+
+    const speeds = Object.entries(fanSection)
+        .filter(([name, entry]) => name.includes('Current Speed') && entry && Number.isFinite(Number(entry.quantity)))
+        .map(([, entry]) => Number(entry.quantity));
+
+    return {
+        fanCount,
+        speeds,
+    };
 }
 
+function run() {
+    let speeds = '';
+
+    try {
+        const str = execSync(`/opt/homebrew/bin/ismc -o json | jq '."Fans"'`).toString();
+        const fanData = parseFanData(str);
+
+        if (fanData && fanData.speeds.length > 0) {
+            speeds = fanData.speeds.map((value) => `${value} rpm`).join(' ');
+        } else {
+            speeds = 'N/A';
+            console.warn('Warning: Could not determine the number of fans or read fan data.');
+        }
+    } catch (e) {
+        speeds = 'N/A';
+        console.error('Critical Error: Failed to execute `ismc` or process fan speed.', e);
+    }
+
+    if (process.env.SWIFTBAR === '1') {
+        console.log(':wind.snow: ' + speeds + '| size=12, symbolize=true');
+    } else {
+        console.log(':cyclone: ' + speeds + '| size=12');
+    }
+}
+
+if (require.main === module) {
+    run();
+}
+
+module.exports = {
+    extractBytesPayload,
+    parseFanData,
+    run,
+};
