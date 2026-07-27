@@ -1,6 +1,6 @@
 {
   "name": "fan_speed",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "fan_speed.5s.js",
   "author": "Masayuki Sunahara <tamanishi@gmail.com>",
   "license": "MIT"
